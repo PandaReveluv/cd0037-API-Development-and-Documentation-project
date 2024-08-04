@@ -35,7 +35,10 @@ class TriviaTestCase(unittest.TestCase):
 
         self.quiz_body = {
             "previous_questions": [],
-            "quiz_category": {"1": "Science"}
+            "quiz_category": {
+                "type": "Science",
+                "id": "1"
+            }
         }
 
     def tearDown(self):
@@ -120,11 +123,18 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().post("/quizzes", json=self.quiz_body)
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertTrue(data['id'])
-        self.assertTrue(data['question'])
-        self.assertIsNone(data['answer'])
-        self.assertIsNone(data['category'])
-        self.assertIsNone(data['difficulty'])
+        self.assertTrue(data['question']['id'])
+        self.assertTrue(data['question']['question'])
+        self.assertTrue(data['question']['answer'])
+        self.assertTrue(data['question']['category'])
+        self.assertTrue(data['question']['difficulty'])
+
+    def test_play_quiz_invalid_request_body(self):
+        invalid_request_body = self.quiz_body.copy()
+        invalid_request_body['previous_questions'] = None
+        res = self.client().post("/quizzes", json=invalid_request_body)
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 422)
 
 
 # Make the tests conveniently executable

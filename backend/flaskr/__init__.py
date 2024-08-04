@@ -203,6 +203,8 @@ def create_app(test_config=None):
         request_body = request.get_json()
         previous_questions = request_body.get('previous_questions', None)
         quiz_category = request_body.get('quiz_category', None)
+        if not isinstance(previous_questions, list):
+            abort(422)
         next_question = (Question.query
                          .filter(Question.id.notin_(previous_questions))
                          .filter(Question.category == quiz_category.get('id'))

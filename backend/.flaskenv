@@ -1,2 +1,5 @@
 FLASK_ENV=development
 FLASK_APP=flaskr
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=admin
+DATABASE_url=localhost
