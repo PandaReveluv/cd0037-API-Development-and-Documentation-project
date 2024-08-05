@@ -205,12 +205,17 @@ def create_app(test_config=None):
         quiz_category = request_body.get('quiz_category', None)
         if not isinstance(previous_questions, list):
             abort(422)
-        next_question = (Question.query
-                         .filter(Question.id.notin_(previous_questions))
-                         .filter(Question.category == quiz_category.get('id'))
-                         .order_by(func.random()).first())
+        question_query = (Question.query
+                          .filter(Question.id.notin_(previous_questions)))
+        if quiz_category['id'] != 0:
+            question_query = (question_query
+                              .filter(Question.category ==
+                                      quiz_category.get('id')))
+        next_question = question_query.order_by(func.random()).first()
+        if next_question is not None:
+            next_question = next_question.format()
         return jsonify({
-            "question": next_question.format()
+            "question": next_question
         })
 
     """
